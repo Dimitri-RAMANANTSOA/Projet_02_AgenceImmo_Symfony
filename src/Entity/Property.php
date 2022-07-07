@@ -5,8 +5,13 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PropertyRepository;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
+/**
+ * @UniqueEntity("title")
+ */
 class Property
 {
     const HEAT =[
@@ -20,12 +25,27 @@ class Property
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    /**
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 50,
+     *      minMessage = "Le nom du bien doit faire au moins {{ limit }} caractères",
+     *      maxMessage = "Le nom du bien ne peux pas être plus grand que {{ limit }} caractères"
+     * )
+     */
     private $title;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private $description;
 
     #[ORM\Column(type: 'integer')]
+    /**
+     * @Assert\Range(
+     *      min = 10,
+     *      max = 400,
+     *      notInRangeMessage = "La surface doit être comprise entre {{ min }}m² et {{ max }}m²",
+     * )
+     */
     private $surface;
 
     #[ORM\Column(type: 'smallint')]
@@ -50,6 +70,13 @@ class Property
     private $address;
 
     #[ORM\Column(type: 'string', length: 255)]
+    
+    /**
+     * @Assert\Regex(
+     *     pattern="/^[0-9]{5}/",
+     *     message="Code postal invalide"
+     * )
+     */
     private $postal_code;
 
     #[ORM\Column(type: 'boolean', options : ["default" => false])]
