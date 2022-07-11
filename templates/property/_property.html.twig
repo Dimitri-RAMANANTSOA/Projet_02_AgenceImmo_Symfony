@@ -1,0 +1,12 @@
+<div class="col-3">
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">
+                <a href="{{ path('property.show', {id: property.id, slug: property.slug}) }}">{{ property.title }}</a>
+            </h5>
+            <p class="card-text">{{ property.description | nl2br }}</p>
+            <p class="card-text">{{ property.city }} ({{ property.PostalCode}})</p>
+            <div class="text-primary" style="font-weight: bold; font-size: 2rem;">{{ property.FormattedPrice }} €</div>
+        </div>
+    </div>
+</div>
