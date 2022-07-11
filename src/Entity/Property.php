@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PropertyRepository;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -85,9 +87,13 @@ class Property
     #[ORM\Column(type: 'datetime_immutable')]
     private $created_at;
 
+    #[ORM\ManyToMany(targetEntity: Option::class, inversedBy: 'properties')]
+    private $options;
+
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable();
+        $this->options = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -262,6 +268,33 @@ class Property
     public function setCreatedAt(\DateTimeImmutable $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Option>
+     */
+    public function getOptions(): Collection
+    {
+        return $this->options;
+    }
+
+    public function addOption(Option $option): self
+    {
+        if (!$this->options->contains($option)) {
+            $this->options[] = $option;
+            $option->addProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOption(Option $option): self
+    {
+        if ($this->options->removeElement($option)) {
+            $option->removeProperty($this);
+        }
 
         return $this;
     }
