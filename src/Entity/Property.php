@@ -2,15 +2,21 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PropertyRepository;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
+#[Vich\Uploadable]
 /**
  * @UniqueEntity("title")
  */
@@ -90,9 +96,26 @@ class Property
     #[ORM\ManyToMany(targetEntity: Option::class, inversedBy: 'properties')]
     private $options;
 
+    #[Vich\UploadableField(mapping: 'product_image', fileNameProperty: 'imageName', size: 'imageSize')]
+    /**
+     * @Assert\Image(
+     *     mimeTypes="image/jpeg"
+     * )
+     */
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: 'string')]
+    private ?string $imageName = null;
+
+    #[ORM\Column(type: 'integer')]
+    private ?int $imageSize = null;
+
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?DateTimeInterface $updatedAt = null;
+
     public function __construct()
     {
-        $this->created_at = new \DateTimeImmutable();
+        $this->created_at = new DateTimeImmutable();
         $this->options = new ArrayCollection();
     }
 
@@ -260,12 +283,12 @@ class Property
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): self
+    public function setCreatedAt(DateTimeImmutable $created_at): self
     {
         $this->created_at = $created_at;
 
@@ -297,5 +320,50 @@ class Property
         }
 
         return $this;
+    }
+
+    /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        // Only change the updated af if the file is really uploaded to avoid database updates.
+        // This is needed when the file should be set when loading the entity.
+        if ($this->imageFile instanceof UploadedFile) {
+            $this->updatedAt = new DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+    
+    public function setImageSize(?int $imageSize): void
+    {
+        $this->imageSize = $imageSize;
+    }
+
+    public function getImageSize(): ?int
+    {
+        return $this->imageSize;
     }
 }
