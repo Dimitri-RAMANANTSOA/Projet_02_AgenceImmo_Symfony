@@ -1,7 +1,7 @@
 <div class="col-3">
     <div class="card mt-4">
-        {% if property.imageName %}
-            <img src="{{ vich_uploader_asset(property, 'imageFile') | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
+        {% if property.picture %}
+            <img src="{{ vich_uploader_asset(property.picture, 'imageFile') | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
          {% else %}
             <img src="{{ '/images/properties/empty.jpg' | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
         {% endif %}

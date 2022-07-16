@@ -17,8 +17,24 @@
             {% endif %}
             <div class="row">
                 <div class="col-md-8">
-                    {% if property.imageName %}
-                        <img src="{{ vich_uploader_asset(property, 'imageFile') | imagine_filter('medium') }}" alt="card-img-top" style="width:100%; height:auto;" />
+                    {% if property.pictures %}
+                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for picture in property.pictures %}
+                                    <div class="carousel-item{% if picture is same as(property.pictures.first)  %} active{% endif %}">                                
+                                        <img class="d-block w-100" src="{{ vich_uploader_asset(picture, 'imageFile') | imagine_filter('thumb') }}">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only"></span>
+                            </a>
+                            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only"></span>
+                            </a>
+                            </div>
                     {% else %}
                         <img src="{{ '/images/properties/empty.jpg' | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
                     {% endif %}

@@ -4,19 +4,16 @@ namespace App\Entity;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use App\Entity\Picture;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PropertyRepository;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
-#[Vich\Uploadable]
 /**
  * @UniqueEntity("title")
  */
@@ -96,27 +93,19 @@ class Property
     #[ORM\ManyToMany(targetEntity: Option::class, inversedBy: 'properties')]
     private $options;
 
-    #[Vich\UploadableField(mapping: 'product_image', fileNameProperty: 'imageName', size: 'imageSize')]
-    /**
-     * @Assert\Image(
-     *     mimeTypes="image/jpeg"
-     * )
-     */
-    private ?File $imageFile = null;
-
-    #[ORM\Column(type: 'string')]
-    private ?string $imageName = null;
-
-    #[ORM\Column(type: 'integer')]
-    private ?int $imageSize = null;
-
     #[ORM\Column(type: 'datetime_immutable')]
     private ?DateTimeInterface $updatedAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'property', targetEntity: Picture::class, orphanRemoval: true, cascade:["persist"])]
+    private $pictures;
+
+    private $pictureFiles;
 
     public function __construct()
     {
         $this->created_at = new DateTimeImmutable();
         $this->options = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -323,47 +312,67 @@ class Property
     }
 
     /**
-     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
-     * of 'UploadedFile' is injected into this setter to trigger the update. If this
-     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
-     * must be able to accept an instance of 'File' as the bundle will inject one here
-     * during Doctrine hydration.
-     *
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
+     * @return Collection<int, Picture>
      */
-    public function setImageFile(?File $imageFile = null): void
+    public function getPictures(): Collection
     {
-        $this->imageFile = $imageFile;
+        return $this->pictures;
+    }
 
-        // Only change the updated af if the file is really uploaded to avoid database updates.
-        // This is needed when the file should be set when loading the entity.
-        if ($this->imageFile instanceof UploadedFile) {
-            $this->updatedAt = new DateTimeImmutable();
+    public function addPicture(Picture $picture): self
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures[] = $picture;
+            $picture->setProperty($this);
         }
+
+        return $this;
     }
 
-    public function getImageFile(): ?File
+    public function removePicture(Picture $picture): self
     {
-        return $this->imageFile;
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getProperty() === $this) {
+                $picture->setProperty(null);
+            }
+        }
+
+        return $this;
     }
 
-    public function setImageName(?string $imageName): void
+    /**
+     * Get the value of pictureFiles
+     */
+    public function getPictureFiles()
     {
-        $this->imageName = $imageName;
+        return $this->pictureFiles;
     }
 
-    public function getImageName(): ?string
+    public function getPicture(): ?Picture
     {
-        return $this->imageName;
-    }
-    
-    public function setImageSize(?int $imageSize): void
-    {
-        $this->imageSize = $imageSize;
+        if ($this->pictures->isEmpty())
+        {
+            return null;
+        }
+        return $this->pictures->first();
     }
 
-    public function getImageSize(): ?int
+    /**
+     * Set the value of pictureFiles
+     */
+    public function setPictureFiles($pictureFiles): self
     {
-        return $this->imageSize;
+        foreach ($pictureFiles as $pictureFile)
+        {
+            $picture = new Picture();
+            $picture->setImageFile($pictureFile);
+            $this->addPicture($picture);
+        }
+        $this->pictureFiles = $pictureFiles;
+
+        dump($this->pictureFiles);
+
+        return $this;
     }
 }
