@@ -106,6 +106,7 @@ class Property
         $this->created_at = new DateTimeImmutable();
         $this->options = new ArrayCollection();
         $this->pictures = new ArrayCollection();
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int

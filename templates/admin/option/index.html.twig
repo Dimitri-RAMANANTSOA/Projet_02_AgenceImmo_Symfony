@@ -12,6 +12,10 @@
             </div>
         {% endfor %}
 
+        <div class="text-end">
+            <a href="{{ path('admin.option.new') }}" class="btn btn-primary">Créer une nouvelle option</a>
+        </div>
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -35,9 +39,5 @@
                 {% endfor %}
             </tbody>
         </table>
-
-        <div class="text-end">
-            <a href="{{ path('admin.option.new') }}" class="btn btn-primary">Créer un nouveau bien</a>
-        </div>
     </div>    
 {% endblock %}

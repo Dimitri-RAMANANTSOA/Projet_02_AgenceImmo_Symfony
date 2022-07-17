@@ -17,24 +17,24 @@
             {% endif %}
             <div class="row">
                 <div class="col-md-8">
-                    {% if property.pictures %}
-                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                    {% if property.pictures is not empty %}
+                        <div id="PicturesCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                {% for picture in property.pictures %}
-                                    <div class="carousel-item{% if picture is same as(property.pictures.first)  %} active{% endif %}">                                
-                                        <img class="d-block w-100" src="{{ vich_uploader_asset(picture, 'imageFile') | imagine_filter('thumb') }}">
-                                    </div>
-                                {% endfor %}
+                            {% for picture in property.pictures %}
+                                <div class="carousel-item{% if picture is same as(property.pictures.first)  %} active{% endif %}">
+                                    <img src="{{ vich_uploader_asset(picture, 'imageFile') | imagine_filter('show') }}" class="d-block w-100">
+                                </div>
+                            {% endfor %}
                             </div>
-                            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#PicturesCarousel" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="sr-only"></span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#PicturesCarousel" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="sr-only"></span>
-                            </a>
-                            </div>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
                     {% else %}
                         <img src="{{ '/images/properties/empty.jpg' | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
                     {% endif %}
