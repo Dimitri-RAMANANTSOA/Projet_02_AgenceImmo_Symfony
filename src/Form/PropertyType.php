@@ -9,7 +9,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class PropertyType extends AbstractType
 {
@@ -36,9 +38,23 @@ class PropertyType extends AbstractType
                 'required' => false,
                 'multiple' => true
             ])
-            ->add('city')
-            ->add('address')
-            ->add('postal_code')
+            ->add('city', TextType::class, [
+                'attr' => [
+                    'autocomplete' => 'address-level2'
+                ]
+            ])
+            ->add('address', TextType::class, [
+                'attr' => [
+                    'autocomplete' => 'address-line1'
+                ]
+            ])
+            ->add('postal_code', TextType::class, [
+                'attr' => [
+                    'autocomplete' => 'postal-code'
+                ]
+            ])
+            ->add('lat', HiddenType::class)
+            ->add('lng', HiddenType::class)
             ->add('sold')
         ;
     }

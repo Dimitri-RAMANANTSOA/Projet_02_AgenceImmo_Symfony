@@ -6,6 +6,33 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
+
+const ACCESS_TOKEN = 'pk.eyJ1IjoiZGltaXRyaXJhbWFuYW50c29hIiwiYSI6ImNsNmJ3ejZpMjAwcW8zam8xajRnbW14MmkifQ.UpCFZNaipaV6FGFudt6UPQ';
+
+let inputAddress = document.querySelector('#property_address')
+if (inputAddress !== null)
+{
+  const script = document.getElementById('search-js');
+  script.onload = () => {
+      const autofill = document.querySelector('mapbox-address-autofill');
+      
+      autofill.accessToken = ACCESS_TOKEN;
+      
+      autofill.addEventListener('retrieve', (event) => {
+        const featureCollection = event.detail;
+        if (!featureCollection || !featureCollection.features.length) {
+        return;
+        }
+        
+        const feature = featureCollection.features[0];
+
+        document.querySelector('#property_lat').value = feature.geometry.coordinates[0]  
+        document.querySelector('#property_lng').value = feature.geometry.coordinates[1]
+      });
+    };
+}
+
+
 import './styles/app.css';
 
 // start the Stimulus application

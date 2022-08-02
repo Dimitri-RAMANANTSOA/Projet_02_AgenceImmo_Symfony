@@ -2,6 +2,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <title>{% block title %}Welcome!{% endblock %}</title>
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
@@ -17,6 +19,13 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
+
+        <script
+          id="search-js"
+          defer
+          src="https://api.mapbox.com/search-js/v1.0.0-beta.12/web.js"
+        >
+        </script>
     </head>
     <body>
 
