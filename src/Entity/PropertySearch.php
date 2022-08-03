@@ -21,6 +21,31 @@ class PropertySearch
      */
     private $options;
 
+    /**
+     * @var float|null
+     */
+    private $lat;
+
+    /**
+     * @var float|null
+     */
+    private $lng;
+
+    /**
+     * @var integer|null
+     */
+    private $distance;
+
+    /**
+     * @var string|null
+     */
+    private $city_search;
+
+    /**
+     * @var string|null
+     */
+    private $address_search;
+
     public function __construct()
     {
         $this->options = new ArrayCollection();
@@ -98,6 +123,96 @@ class PropertySearch
     public function setOptions(ArrayCollection $options)
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of lat
+     */
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    /**
+     * Set the value of lat
+     */
+    public function setLat($lat): self
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of lng
+     */
+    public function getLng(): ?float
+    {
+        return $this->lng;
+    }
+
+    /**
+     * Set the value of lng
+     */
+    public function setLng($lng): self
+    {
+        $this->lng = $lng;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of distance
+     */
+    public function getDistance(): ?int
+    {
+        return $this->distance;
+    }
+
+    /**
+     * Set the value of distance
+     */
+    public function setDistance($distance): self
+    {
+        $this->distance = $distance;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of city_search
+     */
+    public function getCitySearch(): ?string
+    {
+        return $this->city_search;
+    }
+
+    /**
+     * Set the value of city_search
+     */
+    public function setCitySearch($city_search): self
+    {
+        $this->city_search = $city_search;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of address_search
+     */
+    public function getAddressSearch(): ?string
+    {
+        return $this->address_search;
+    }
+
+    /**
+     * Set the value of address_search
+     */
+    public function setAddressSearch($address_search): self
+    {
+        $this->address_search = $address_search;
 
         return $this;
     }

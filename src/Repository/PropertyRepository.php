@@ -75,6 +75,21 @@ class PropertyRepository extends ServiceEntityRepository
             }
         }
 
+        if($search->getLat() && $search->getLng() && $search->getDistance() > 0)
+        {
+            $query = $query
+                ->select('p')
+                ->andWhere('(6371 * 2 * ASIN(SQRT(
+                    POWER(SIN((p.lat - abs(:lat)) * pi()/180 / 2),
+                    2) + COS(p.lat * pi()/180 ) * COS(abs(:lat) *
+                    pi()/180) * POWER(SIN((p.lng - :lng) *
+                    pi()/180 / 2), 2) ))) <= :distance')
+                ->setParameter('lat', $search->getLat())
+                ->setParameter('lng', $search->getLng())
+                ->setParameter('distance', $search->getDistance())
+                ;
+        }
+
         return $query->getQuery();
 
     }

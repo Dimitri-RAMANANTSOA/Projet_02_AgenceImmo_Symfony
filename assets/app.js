@@ -7,13 +7,14 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 
-const ACCESS_TOKEN = 'pk.eyJ1IjoiZGltaXRyaXJhbWFuYW50c29hIiwiYSI6ImNsNmJ3ejZpMjAwcW8zam8xajRnbW14MmkifQ.UpCFZNaipaV6FGFudt6UPQ';
+const ACCESS_TOKEN = 'pk.eyJ1IjoiZGltaXRyaXJhbWFuYW50c29hIiwiYSI6ImNsNmJ4M2NudTAxdWYzZW81bHRqZ3V3a3oifQ.ZFBQSWzoAEKqhK77x2ss7w';
 const script = document.getElementById('search-js');
 
 
 let showmap = document.querySelector('#map')
 if (showmap !== null)
 {
+  console.log('map')
   script.onload = () => {
     const minimap = document.querySelector('mapbox-address-minimap');
   
@@ -36,9 +37,35 @@ if (showmap !== null)
   };  
 }
 
+let inputCity = document.querySelector('#city_search')
+if (inputCity !== null)
+{
+  console.log('city_search')
+  
+  script.onload = () => {
+    const autofill = document.querySelector('mapbox-address-autofill');
+
+    autofill.accessToken = ACCESS_TOKEN;
+    autofill.options = { country: 'fr' };
+     
+    autofill.addEventListener('retrieve', (event) => {
+      const featureCollection = event.detail;
+      if (!featureCollection || !featureCollection.features.length) {
+        return;
+      }
+      
+      const feature = featureCollection.features[0];
+
+      document.querySelector('#lat').value = feature.geometry.coordinates[0]  
+      document.querySelector('#lng').value = feature.geometry.coordinates[1]
+    });
+  };
+}
+
 let inputAddress = document.querySelector('#property_address')
 if (inputAddress !== null)
 {
+  console.log('property_address')
   script.onload = () => {
     const autofill = document.querySelector('mapbox-address-autofill');
     const minimap = document.querySelector('mapbox-address-minimap');

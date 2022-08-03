@@ -6,6 +6,13 @@ doctrine:
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '13'
     orm:
+        dql:
+            numeric_functions:
+                asin: DoctrineExtensions\Query\Mysql\Asin
+                power: DoctrineExtensions\Query\Mysql\Power
+                cos: DoctrineExtensions\Query\Mysql\Cos
+                pi: DoctrineExtensions\Query\Mysql\Pi
+                sin: DoctrineExtensions\Query\Mysql\Sin
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true

@@ -10,6 +10,11 @@
             <div class="col-md-4">{{ form_row(form.minSurface) }}</div>
             <div class="col-md-4">{{ form_row(form.maxPrice) }}</div>
             <div class="col-md-4">{{ form_row(form.options) }}</div>
+            <mapbox-address-autofill>
+                <div class="col-md-2">{{ form_row (form.address_search)}}</div>
+                <div class="col-md-2">{{ form_row (form.city_search)}}</div>
+            </mapbox-address-autofill>
+            <div class="col-md-4">{{ form_row(form.distance) }}</div>
             <div class="col-md-4"><button class="btn btn-primary">Rechercher</button></div>
         </div>
         {{ form_end(form) }}
