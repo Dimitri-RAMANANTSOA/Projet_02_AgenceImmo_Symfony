@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    <div class="container mt-4">
+    <div class="container mt-4 mb-4">
 
         <p>
             {{ property.Description | nl2br }}
@@ -95,6 +95,10 @@
                         <td>Chauffage</td>
                         <td>{{ property.heatType }}</td>
                     </tr>
+                    <tr>
+                        <td>Adresse</td>
+                        <td>{{ property.address }} {{ property.city }} {{ property.postalcode }} </td>
+                    </tr>
                 </table>
             </div>
     
@@ -106,6 +110,9 @@
                 {% endfor %}
             </ul>
         </div>
+    </div>
+    <div id="map" data-lat="{{ property.lat }}" data-lng="{{ property.lng }}" class="mt-4" style="width: 50%; height: 200px;">
+            <mapbox-address-minimap></mapbox-address-minimap>
     </div>
 </div>
 {% endblock %}

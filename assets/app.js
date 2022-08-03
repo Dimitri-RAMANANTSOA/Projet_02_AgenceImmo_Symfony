@@ -8,30 +8,74 @@
 // any CSS you import will output into a single css file (app.css in this case)
 
 const ACCESS_TOKEN = 'pk.eyJ1IjoiZGltaXRyaXJhbWFuYW50c29hIiwiYSI6ImNsNmJ3ejZpMjAwcW8zam8xajRnbW14MmkifQ.UpCFZNaipaV6FGFudt6UPQ';
+const script = document.getElementById('search-js');
+
+
+let showmap = document.querySelector('#map')
+if (showmap !== null)
+{
+  script.onload = () => {
+    const minimap = document.querySelector('mapbox-address-minimap');
+  
+    let lat = showmap.dataset.lat
+    let lng = showmap.dataset.lng
+    minimap.accessToken = ACCESS_TOKEN;
+
+    if (lat != 0 && lng != 0)
+    {
+      minimap.feature = {
+        type: 'Feature',
+        geometry: {
+        type: 'Point',
+        coordinates: [lat, lng]
+        },
+        properties: {}
+      };
+    }
+    
+  };  
+}
 
 let inputAddress = document.querySelector('#property_address')
 if (inputAddress !== null)
 {
-  const script = document.getElementById('search-js');
   script.onload = () => {
-      const autofill = document.querySelector('mapbox-address-autofill');
-      
-      autofill.accessToken = ACCESS_TOKEN;
-      
-      autofill.addEventListener('retrieve', (event) => {
-        const featureCollection = event.detail;
-        if (!featureCollection || !featureCollection.features.length) {
+    const autofill = document.querySelector('mapbox-address-autofill');
+    const minimap = document.querySelector('mapbox-address-minimap');
+
+    let lat = document.querySelector('#property_lat').value
+    let lng = document.querySelector('#property_lng').value
+     
+    autofill.accessToken = ACCESS_TOKEN;
+    minimap.accessToken = ACCESS_TOKEN;
+
+    if (lat != 0 && lng != 0)
+    {
+      minimap.feature = {
+        type: 'Feature',
+        geometry: {
+        type: 'Point',
+        coordinates: [lat, lng]
+        },
+        properties: {}
+      };
+    }
+     
+    autofill.addEventListener('retrieve', (event) => {
+      const featureCollection = event.detail;
+      if (!featureCollection || !featureCollection.features.length) {
+        minimap.feature = null;
         return;
-        }
-        
-        const feature = featureCollection.features[0];
+      }
+      
+      const feature = featureCollection.features[0];
+      minimap.feature = feature;
 
-        document.querySelector('#property_lat').value = feature.geometry.coordinates[0]  
-        document.querySelector('#property_lng').value = feature.geometry.coordinates[1]
-      });
-    };
+      document.querySelector('#property_lat').value = feature.geometry.coordinates[0]  
+      document.querySelector('#property_lng').value = feature.geometry.coordinates[1]
+    });
+  };
 }
-
 
 import './styles/app.css';
 
