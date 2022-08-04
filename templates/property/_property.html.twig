@@ -1,17 +1,15 @@
-<div class="col-3">
-    <div class="card mt-4">
-        {% if property.picture %}
-            <img src="{{ vich_uploader_asset(property.picture, 'imageFile') | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
-         {% else %}
-            <img src="{{ '/images/properties/empty.jpg' | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
-        {% endif %}
-        <div class="card-body">
-            <h5 class="card-title">
-                <a href="{{ path('property.show', {id: property.id, slug: property.slug}) }}">{{ property.title }}</a>
-            </h5>
-            <p class="card-text">{{ property.description | nl2br }}</p>
-            <p class="card-text">{{ property.surface }}m² - {{ property.city }} ({{ property.PostalCode}})</p>
-            <div class="text-primary" style="font-weight: bold; font-size: 2rem;">{{ property.FormattedPrice }} €</div>
-        </div>
+<div class="card mt-4 ms-2 me-2" style='width: 300px;'>
+    {% if property.picture %}
+        <img src="{{ vich_uploader_asset(property.picture, 'imageFile') | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
+        {% else %}
+        <img src="{{ '/images/properties/empty.jpg' | imagine_filter('thumb') }}" alt="card-img-top" style="width:100%; height:auto;" />
+    {% endif %}
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="{{ path('property.show', {id: property.id, slug: property.slug}) }}">{{ property.title }}</a>
+        </h5>
+        <p class="card-text">{{ property.description | nl2br }}</p>
+        <p class="card-text">{{ property.surface }}m² - {{ property.city }} ({{ property.PostalCode}})</p>
+        <div class="text-primary" style="font-weight: bold; font-size: 2rem;">{{ property.FormattedPrice }} €</div>
     </div>
 </div>

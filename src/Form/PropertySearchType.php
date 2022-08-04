@@ -34,7 +34,7 @@ class PropertySearchType extends AbstractType
             ])
             ->add('options', EntityType::class, [
                 'required' => false,
-                'label' => false,
+                'label' => 'Options',
                 'class' => Option::class,
                 'choice_label' => 'name',
                 'multiple' => true
@@ -59,7 +59,8 @@ class PropertySearchType extends AbstractType
                     '10 km' => 10,
                     '50 km' => 50,
                     '100 km' => 100
-                ]
+                ],
+                'label' => 'Distance'
             ])
             ->add('lat', HiddenType::class)
             ->add('lng', HiddenType::class)
