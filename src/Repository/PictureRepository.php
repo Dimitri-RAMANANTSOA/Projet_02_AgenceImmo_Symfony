@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Picture;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Property;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Picture>
@@ -37,6 +39,29 @@ class PictureRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @param Property[] $properties
+     * @return ArrayCollection
+     */
+    public function findForProperties (array $properties) : ArrayCollection
+    {
+        $pictures = $this->createQueryBuilder('p')
+                    ->select('p')
+                    ->where('p.property IN (:properties)')
+                    ->groupBy('p.property')
+                    ->getQuery()
+                    ->setParameter('properties', $properties)
+                    ->getResult()
+                    ;
+        
+        $pictures = array_reduce($pictures, function(array $acc, Picture $picture){
+            $acc[$picture->getProperty()->getId()] = $picture;
+            return $acc;
+        },[]);
+        
+        return new ArrayCollection($pictures);
     }
 
 //    /**

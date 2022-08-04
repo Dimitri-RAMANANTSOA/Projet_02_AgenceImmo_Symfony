@@ -2,11 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Picture;
 use Doctrine\ORM\Query;
 use App\Entity\Property;
 use App\Entity\PropertySearch;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -19,9 +22,15 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  */
 class PropertyRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var PaginatorInterface
+     */
+    private $paginator;
+
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Property::class);
+        $this->paginator = $paginator;
     }
 
     public function add(Property $entity, bool $flush = false): void
@@ -43,9 +52,9 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Query
+     * @return SlidingPagination
      */
-    public function findAllVisibleQuery(PropertySearch $search) : Query
+    public function PaginateAllVisible(PropertySearch $search, int $page) : SlidingPagination
     {
         $query = $this->findVisibleQuery();
         if ($search->getMaxPrice())
@@ -90,7 +99,15 @@ class PropertyRepository extends ServiceEntityRepository
                 ;
         }
 
-        return $query->getQuery();
+        $properties = $this->paginator->paginate(
+            $query->getQuery(),
+            $page, /*page number*/
+            12 /*limit per page*/
+        );
+
+        $this->hydratePicture($properties);
+
+        return $properties;
 
     }
 
@@ -99,11 +116,13 @@ class PropertyRepository extends ServiceEntityRepository
      */
     public function findLatest() : array
     {
-        return $this->findVisibleQuery()
+        $properties =  $this->findVisibleQuery()
             ->setMaxResults(4)
             ->getQuery()
             ->getResult()
         ;
+        $this->hydratePicture($properties);
+        return $properties;
 
     }
 
@@ -111,6 +130,26 @@ class PropertyRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
         ->where('p.sold = false');
+    }
+
+    private function hydratePicture($properties)
+    {
+        if($properties InstanceOf SlidingPagination)
+        {
+            $properties = $properties->getItems();
+        }
+        $pictures = $this->getEntityManager()->getRepository(Picture::class)->findForProperties($properties);
+
+        foreach ($properties as $property)
+        {
+            /**
+             * @var Property $property
+             */
+            if ($pictures->containsKey($property->getId()))
+            {
+                $property->setPicture($pictures->get($property->getId()));
+            }
+        }
     }
 
 //    /**
